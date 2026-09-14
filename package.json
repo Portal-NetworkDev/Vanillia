@@ -1,0 +1,12 @@
+{
+  "name": "vanillia",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "vanilliapxy": "^0.3.8"
+  }
+}
