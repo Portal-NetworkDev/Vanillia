@@ -110,6 +110,18 @@ select { border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; col
 	</main>
 </div>
 <script>
+(() => {
+    const host = document.getElementById("page");
+    if (!host || host.shadowRoot) return;
+    const shadow = host.attachShadow({ mode: "open" });
+    host.replaceChildren = (...nodes) => shadow.replaceChildren(...nodes);
+    host.appendChild = node => shadow.appendChild(node);
+    host.append = (...nodes) => shadow.append(...nodes);
+    host.querySelectorAll = (...args) => shadow.querySelectorAll(...args);
+    host.querySelector = (...args) => shadow.querySelector(...args);
+})();
+</script>
+<script>
 const BACKENDS = {
 	vanillia: { name: "VanilliaPXY", base: "/", route: "vanillia?url=" },
 	scramjet: { name: "Scramjet", route: "education?portal=" },
