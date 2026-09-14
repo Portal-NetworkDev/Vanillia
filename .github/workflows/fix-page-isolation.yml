@@ -1,0 +1,45 @@
+name: Fix page isolation
+
+on:
+  push:
+    paths:
+      - .github/workflows/fix-page-isolation.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Patch index
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'index.html';
+          const content = fs.readFileSync(path, 'utf8');
+          const injection = `<script>\n(() => {\n    const host = document.getElementById("page");\n    if (!host || host.shadowRoot) return;\n    const shadow = host.attachShadow({ mode: "open" });\n    host.replaceChildren = (...nodes) => shadow.replaceChildren(...nodes);\n    host.appendChild = node => shadow.appendChild(node);\n    host.append = (...nodes) => shadow.append(...nodes);\n    host.querySelectorAll = (...args) => shadow.querySelectorAll(...args);\n    host.querySelector = (...args) => shadow.querySelector(...args);\n})();\n</script>`;
+          if (!content.includes('host.attachShadow({ mode: "open" })')) {
+            const marker = '<script>';
+            const index = content.indexOf(marker);
+            if (index < 0) throw new Error('Main script not found');
+            fs.writeFileSync(path, content.slice(0, index) + injection + '\n' + content.slice(index));
+          }
+          NODE
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html
+          git diff --cached --quiet || git commit -m "Isolate proxied page styles"
+          git push
+      - name: Remove workflow
+        run: |
+          rm .github/workflows/fix-page-isolation.yml
+          git add .github/workflows/fix-page-isolation.yml
+          git commit -m "Remove temporary isolation workflow"
+          git push
