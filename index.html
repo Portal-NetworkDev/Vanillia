@@ -1,152 +1,286 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vanillia</title>
-    <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      :root { --background:#111; --surface:#191919; --surface-hover:#222; --text:#f2f2f2; --text-secondary:#a6a6a6; --text-muted:#707070; --border:#303030; --accent:#dedede; --accent-hover:#fff; --danger:#d93025; --success:#188038; --radius:10px; --radius-small:7px; --shadow:0 2px 10px rgba(0,0,0,.18); }
-      html, body { min-height:100%; background:var(--background); color:var(--text); font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
-      body { min-height:100vh; }
-      button,input,select { font:inherit; }
-      button { color:inherit; }
-      .header { width:100%; height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; background:var(--surface); border-bottom:1px solid var(--border); }
-      .header-left,.header-right { display:flex; align-items:center; gap:12px; }
-      .logo { font-size:20px; font-weight:600; letter-spacing:-.3px; }
-      .button { display:inline-flex; align-items:center; justify-content:center; min-height:40px; padding:0 14px; border:1px solid var(--border); border-radius:var(--radius-small); background:var(--surface); color:var(--text); font-size:14px; font-weight:500; cursor:pointer; transition:background .15s ease,border-color .15s ease,transform .1s ease; }
-      .button:hover { background:var(--surface-hover); border-color:#414141; }
-      .button:active { transform:translateY(1px); }
-      .button-primary { background:var(--accent); border-color:var(--accent); color:#111; }
-      .button-primary:hover { background:var(--accent-hover); border-color:var(--accent-hover); }
-      .icon-button { width:40px; min-width:40px; padding:0; }
-      .icon { width:18px; height:18px; display:block; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-      .main { width:100%; max-width:1100px; margin:0 auto; padding:48px 24px; }
-      .proxy-container { width:100%; max-width:800px; margin:0 auto; }
-      .proxy-bar { display:flex; align-items:center; width:100%; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:6px; box-shadow:var(--shadow); }
-      .proxy-input { flex:1; min-width:0; height:46px; border:none; outline:none; padding:0 14px; background:transparent; color:var(--text); font-size:15px; }
-      .proxy-input::placeholder { color:var(--text-muted); }
-      .section { margin-top:32px; }
-      .section:first-child { margin-top:0; }
-      .section-title { font-size:16px; font-weight:600; margin-bottom:12px; }
-      .section-description { color:var(--text-secondary); font-size:14px; margin-bottom:18px; }
-      .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
-      .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); }
-      .card-title { font-size:16px; font-weight:600; margin-bottom:7px; }
-      .card-description { color:var(--text-secondary); font-size:13px; line-height:1.5; }
-      .backend-list { display:grid; gap:8px; }
-      .backend { width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius-small); background:var(--surface); cursor:pointer; text-align:left; }
-      .backend:hover { background:var(--surface-hover); }
-      .backend.active { border-color:#555; background:#202020; }
-      .backend-name { font-size:14px; font-weight:500; }
-      .backend-route { color:var(--text-muted); font-size:12px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; }
-      .status { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text-secondary); }
-      .status-dot { width:8px; height:8px; border-radius:50%; background:var(--text-muted); }
-      .status-online .status-dot { background:var(--success); }
-      .status-error .status-dot { background:var(--danger); }
-      .footer { width:100%; padding:24px; text-align:center; color:var(--text-muted); font-size:13px; border-top:1px solid var(--border); }
-      @media (max-width:700px) { .header{padding:0 16px;} .main{padding:32px 16px;} .grid{grid-template-columns:1fr;} .proxy-bar{padding:5px;} .proxy-input{height:44px;} .backend-route{display:none;} }
-    </style>
-  </head>
-  <body>
-    <header class="header">
-      <div class="header-left"><div class="logo">Vanillia</div></div>
-      <div class="header-right">
-        <button class="button icon-button" id="settingsButton" type="button" aria-label="Settings" title="Settings">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.42 1.42-.06-.06A1.7 1.7 0 0 0 16.44 18a1.7 1.7 0 0 0-1 .98 1.7 1.7 0 0 0-.12.64V20h-2.01v-.38A1.7 1.7 0 0 0 12.25 18a1.7 1.7 0 0 0-1.81.34l-.06.06-1.42-1.42.06-.06A1.7 1.7 0 0 0 9.36 15a1.7 1.7 0 0 0-.98-1A1.7 1.7 0 0 0 7.74 14H7.5v-2h.24a1.7 1.7 0 0 0 1.62-1.14 1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.42-1.42.06.06A1.7 1.7 0 0 0 12.25 6a1.7 1.7 0 0 0 1-.98 1.7 1.7 0 0 0 .12-.64V4h2.01v.38A1.7 1.7 0 0 0 16.44 6a1.7 1.7 0 0 0 1.81-.34l.06-.06 1.42 1.42-.06.06A1.7 1.7 0 0 0 19.36 9c.13.47.5.85.98 1 .2.06.41.09.62.09h.24v2h-.24a1.7 1.7 0 0 0-1.62 1.14 1.7 1.7 0 0 0 .06 1.77Z"></path></svg>
-        </button>
-      </div>
-    </header>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vanillia</title>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; background: #f4efe3; color: #29251f; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { overflow: hidden; }
+button, input { font: inherit; }
+button { color: inherit; }
+#app { width: 100%; height: 100%; display: flex; flex-direction: column; background: #f4efe3; }
+#topbar { height: 58px; flex: 0 0 58px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: #fffaf0; border-bottom: 1px solid #ddd3c1; }
+#nav { display: flex; align-items: center; gap: 5px; }
+.nav-button { height: 32px; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: #817766; cursor: pointer; font-size: 13px; }
+.nav-button:hover { background: #eee6d6; color: #40382d; }
+.nav-button.active { background: #e7ddc9; color: #29251f; }
+#address-wrap { flex: 1; display: flex; align-items: center; gap: 7px; min-width: 0; }
+#address { width: 100%; height: 36px; border: 1px solid #d7cbb7; border-radius: 7px; outline: none; background: #f8f3e9; color: #40382d; padding: 0 13px; font-size: 13px; transition: border-color .12s ease; }
+#address:focus { border-color: #a9987c; }
+#address::placeholder { color: #a69a88; }
+.icon-button { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #817766; cursor: pointer; }
+.icon-button:hover { background: #eee6d6; border-color: #d8cdbb; color: #40382d; }
+.icon-button svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+#content { position: relative; flex: 1; min-height: 0; }
+#home { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: auto; }
+#home-inner { width: min(720px, calc(100% - 36px)); padding: 60px 0 100px; }
+.home-title { margin: 0 0 27px; font-size: 34px; font-weight: 650; letter-spacing: -1.5px; color: #29251f; }
+#search-box { display: flex; height: 48px; background: #fffaf0; border: 1px solid #d7cbb7; border-radius: 9px; overflow: hidden; }
+#home-input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #40382d; padding: 0 15px; font-size: 14px; }
+#home-input::placeholder { color: #a69a88; }
+#go { width: 66px; border: 0; border-left: 1px solid #d7cbb7; background: #eee6d6; color: #5a4e3e; cursor: pointer; }
+#go:hover { background: #e6dcc9; color: #29251f; }
+#quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.quick-button { min-height: 68px; padding: 12px; text-align: left; border: 1px solid #ddd3c1; border-radius: 8px; background: #fffaf0; cursor: pointer; }
+.quick-button:hover { background: #f0e8d8; border-color: #cfc2ac; }
+.quick-name { display: block; font-size: 13px; color: #514638; margin-bottom: 4px; }
+.quick-url { display: block; font-size: 11px; color: #9b8e7b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#browser { position: absolute; inset: 0; display: none; flex-direction: column; background: #eee8dc; }
+#browser.visible { display: flex; }
+#browserbar { height: 42px; flex: 0 0 42px; display: flex; align-items: center; gap: 5px; padding: 0 8px; background: #fffaf0; border-bottom: 1px solid #ddd3c1; }
+#page-url { flex: 1; min-width: 0; height: 29px; border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; color: #817766; padding: 0 10px; font-size: 12px; outline: 0; }
+#frame { width: 100%; height: 100%; flex: 1; border: 0; background: white; }
+#status { position: absolute; left: 12px; bottom: 12px; padding: 6px 9px; border: 1px solid #d7cbb7; border-radius: 6px; background: rgba(255,250,240,.94); color: #817766; font-size: 10px; pointer-events: none; opacity: 0; transition: opacity .15s ease; }
+#status.show { opacity: 1; }
+#settings { position: absolute; top: 50px; right: 12px; width: 280px; display: none; padding: 15px; border: 1px solid #d7cbb7; border-radius: 9px; background: #fffaf0; box-shadow: 0 12px 35px rgba(72,57,36,.18); z-index: 20; }
+#settings.visible { display: block; }
+.settings-title { font-size: 13px; font-weight: 600; margin-bottom: 14px; color: #40382d; }
+.setting { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-top: 1px solid #e5dccd; font-size: 12px; color: #817766; }
+.setting:first-of-type { border-top: 0; }
+select { border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; color: #5a4e3e; padding: 5px 7px; outline: none; }
+.toggle { width: 32px; height: 18px; border-radius: 20px; border: 0; background: #cfc4b1; position: relative; cursor: pointer; }
+.toggle::after { content: ""; position: absolute; width: 14px; height: 14px; top: 2px; left: 2px; border-radius: 50%; background: #8e816e; transition: transform .12s ease; }
+.toggle.on { background: #a9997e; }
+.toggle.on::after { transform: translateX(14px); background: #fffaf0; }
+@media (max-width: 650px) {
+	#topbar { gap: 8px; padding: 0 9px; }
+	#nav { display: none; }
+	.home-title { font-size: 29px; }
+	#quick { grid-template-columns: 1fr; }
+	#home-inner { padding-top: 35px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+	<header id="topbar">
+		<nav id="nav">
+			<button class="nav-button active" id="home-nav">Home</button>
+			<button class="nav-button" id="new-tab">New Tab</button>
+		</nav>
+		<div id="address-wrap">
+			<input id="address" type="text" autocomplete="off" spellcheck="false" placeholder="Enter a URL or search">
+		</div>
+		<button class="icon-button" id="back" title="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+		<button class="icon-button" id="forward" title="Forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6 6"></path></svg></button>
+		<button class="icon-button" id="reload" title="Reload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15.3-6.3L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.3 6.3L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
+		<button class="icon-button" id="settings-button" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.56-1.03H6.6v-2.4h.24A1.7 1.7 0 0 0 8.4 10a1.7 1.7 0 0 0-.34-1.88L8 8.06l1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 12.67 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.03h.24v2.4h-.24A1.7 1.7 0 0 0 19.4 15Z"></path></svg></button>
+	</header>
+	<main id="content">
+		<section id="home">
+			<div id="home-inner">
+				<h1 class="home-title">Browse without the noise.</h1>
+				<div id="search-box"><input id="home-input" type="text" autocomplete="off" spellcheck="false" placeholder="Enter a URL or search the web"><button id="go">Go</button></div>
+				<div id="quick">
+					<button class="quick-button" data-url="https://example.com"><span class="quick-name">Example</span><span class="quick-url">example.com</span></button>
+					<button class="quick-button" data-url="https://wikipedia.org"><span class="quick-name">Wikipedia</span><span class="quick-url">wikipedia.org</span></button>
+					<button class="quick-button" data-url="https://github.com"><span class="quick-name">GitHub</span><span class="quick-url">github.com</span></button>
+				</div>
+			</div>
+		</section>
+		<section id="browser">
+			<div id="browserbar">
+				<button class="icon-button" id="browser-back" title="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+				<button class="icon-button" id="browser-forward" title="Forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6 6"></path></svg></button>
+				<button class="icon-button" id="browser-reload" title="Reload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15.3-6.3L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.3 6.3L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
+				<input id="page-url" type="text" autocomplete="off" spellcheck="false">
+			</div>
+			<iframe id="frame" allow="fullscreen; autoplay; clipboard-read; clipboard-write"></iframe>
+		</section>
+		<div id="settings">
+			<div class="settings-title">Settings</div>
+			<div class="setting"><span>Backend</span><select id="backend"><option value="vanillia">VanilliaPXY</option><option value="scramjet">Scramjet</option><option value="ultraviolet">Ultraviolet</option><option value="rammerhead">Rammerhead</option></select></div>
+			<div class="setting"><span>Use HTTPS</span><button class="toggle on" id="https-toggle"></button></div>
+			<div class="setting"><span>Open in new tab</span><button class="toggle" id="tab-toggle"></button></div>
+		</div>
+		<div id="status"></div>
+	</main>
+</div>
+<script>
+const BACKENDS = {
+	vanillia: { name: "VanilliaPXY", base: "https://8080.testserver.vanilliaruntime.portal-network.com/", route: "vanillia?url=" },
+	scramjet: { name: "Scramjet", route: "education?portal=" },
+	ultraviolet: { name: "Ultraviolet", route: "classroom?class=" },
+	rammerhead: { name: "Rammerhead", route: "teach?learn=" }
+};
 
-    <main class="main">
-      <section class="section proxy-container">
-        <div class="proxy-bar">
-          <input class="proxy-input" id="urlInput" type="text" inputmode="url" autocomplete="off" placeholder="Enter a URL...">
-          <button class="button button-primary" id="goButton" type="button">Go</button>
-        </div>
-      </section>
+const home = document.getElementById("home");
+const browser = document.getElementById("browser");
+const address = document.getElementById("address");
+const homeInput = document.getElementById("home-input");
+const pageUrl = document.getElementById("page-url");
+const frame = document.getElementById("frame");
+const status = document.getElementById("status");
+const settings = document.getElementById("settings");
+const backendSelect = document.getElementById("backend");
 
-      <section class="section proxy-container" id="backendSection">
-        <div class="section-title">Backend</div>
-        <div class="section-description">Choose the proxy runtime Vanillia should use.</div>
-        <div class="backend-list" id="backendList">
-          <button class="backend active" type="button" data-backend="vanilliapxy"><span><span class="backend-name">VanilliaPXY</span><br><span class="backend-route">/vanillia?url=</span></span></button>
-          <button class="backend" type="button" data-backend="scramjet"><span><span class="backend-name">Scramjet</span><br><span class="backend-route">/education?portal=</span></span></button>
-          <button class="backend" type="button" data-backend="ultraviolet"><span><span class="backend-name">Ultraviolet</span><br><span class="backend-route">/classroom?class=</span></span></button>
-          <button class="backend" type="button" data-backend="rammerhead"><span><span class="backend-name">Rammerhead</span><br><span class="backend-route">/teach?learn=</span></span></button>
-        </div>
-      </section>
+let currentUrl = "";
+let historyStack = [];
+let historyIndex = -1;
+let openNewTab = false;
+let useHttps = true;
+let selectedBackend = localStorage.getItem("vanillia-backend") || "vanillia";
 
-      <section class="section grid proxy-container">
-        <div class="card"><div class="card-title">Selected backend</div><div class="card-description" id="selectedBackend">VanilliaPXY</div></div>
-        <div class="card"><div class="card-title">Status</div><div class="status" id="status"><span class="status-dot"></span><span id="statusText">Ready</span></div></div>
-      </section>
-    </main>
+if (!BACKENDS[selectedBackend]) selectedBackend = "vanillia";
+backendSelect.value = selectedBackend;
 
-    <footer class="footer">(c) 2026 Portal Network inc.</footer>
+function normalizeUrl(value) {
+	value = value.trim();
+	if (!value) return "";
+	if (/^https?:\/\//i.test(value)) return value;
+	if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(value)) return (useHttps ? "https://" : "http://") + value;
+	return "https://www.google.com/search?q=" + encodeURIComponent(value);
+}
 
-    <script>
-      const BACKENDS = {
-        vanilliapxy: { name: "VanilliaPXY", route: "/vanillia?url=" },
-        scramjet: { name: "Scramjet", route: "/education?portal=" },
-        ultraviolet: { name: "Ultraviolet", route: "/classroom?class=" },
-        rammerhead: { name: "Rammerhead", route: "/teach?learn=" }
-      };
+function proxyUrl(url) {
+	const backend = BACKENDS[selectedBackend];
+	const base = backend.base || (useHttps ? window.location.protocol : "http:") + "//" + window.location.host + "/";
+	return base + backend.route + encodeURIComponent(url);
+}
 
-      const urlInput = document.getElementById("urlInput");
-      const goButton = document.getElementById("goButton");
-      const backendList = document.getElementById("backendList");
-      const selectedBackend = document.getElementById("selectedBackend");
-      const status = document.getElementById("status");
-      const statusText = document.getElementById("statusText");
-      const settingsButton = document.getElementById("settingsButton");
-      const backendSection = document.getElementById("backendSection");
-      let selected = localStorage.getItem("vanillia-backend") || "vanilliapxy";
-      if (!BACKENDS[selected]) selected = "vanilliapxy";
+function showStatus(text) {
+	status.textContent = text;
+	status.classList.add("show");
+	clearTimeout(showStatus.timer);
+	showStatus.timer = setTimeout(() => status.classList.remove("show"), 1800);
+}
 
-      function setStatus(text, state) {
-        statusText.textContent = text;
-        status.className = "status" + (state ? " status-" + state : "");
-      }
+function navigate(value, addHistory = true) {
+	const target = normalizeUrl(value);
+	if (!target) return;
+	currentUrl = target;
+	address.value = target;
+	pageUrl.value = target;
+	home.style.display = "none";
+	browser.classList.add("visible");
+	if (addHistory) {
+		historyStack = historyStack.slice(0, historyIndex + 1);
+		historyStack.push(target);
+		historyIndex++;
+	}
+	const targetUrl = proxyUrl(target);
+	if (openNewTab) {
+		window.open(targetUrl, "_blank");
+		return;
+	}
+	showStatus("Loading...");
+	frame.src = targetUrl;
+}
 
-      function selectBackend(key) {
-        if (!BACKENDS[key]) return;
-        selected = key;
-        localStorage.setItem("vanillia-backend", key);
-        selectedBackend.textContent = BACKENDS[key].name;
-        document.querySelectorAll(".backend").forEach(button => button.classList.toggle("active", button.dataset.backend === key));
-      }
+function goHome() {
+	browser.classList.remove("visible");
+	home.style.display = "flex";
+	address.value = "";
+	homeInput.focus();
+	document.querySelectorAll(".nav-button").forEach(button => button.classList.remove("active"));
+	document.getElementById("home-nav").classList.add("active");
+}
 
-      function normalizeUrl(value) {
-        const input = value.trim();
-        if (!input) return null;
-        if (/^[a-z][a-z0-9+.-]*:\/\//i.test(input)) return input;
-        if (/^[a-z][a-z0-9+.-]*:/i.test(input)) return input;
-        return "https://" + input;
-      }
+function goBack() {
+	if (historyIndex <= 0) return;
+	historyIndex--;
+	navigate(historyStack[historyIndex], false);
+}
 
-      function launch() {
-        const target = normalizeUrl(urlInput.value);
-        if (!target) {
-          setStatus("Enter a URL first", "error");
-          urlInput.focus();
-          return;
-        }
-        const backend = BACKENDS[selected];
-        setStatus("Opening " + backend.name + "...", "online");
-        window.location.href = backend.route + encodeURIComponent(target);
-      }
+function goForward() {
+	if (historyIndex >= historyStack.length - 1) return;
+	historyIndex++;
+	navigate(historyStack[historyIndex], false);
+}
 
-      backendList.addEventListener("click", event => {
-        const button = event.target.closest(".backend");
-        if (!button) return;
-        selectBackend(button.dataset.backend);
-      });
+function reload() {
+	if (!currentUrl) return;
+	showStatus("Reloading...");
+	frame.src = proxyUrl(currentUrl);
+}
 
-      goButton.addEventListener("click", launch);
-      urlInput.addEventListener("keydown", event => { if (event.key === "Enter") launch(); });
-      settingsButton.addEventListener("click", () => backendSection.scrollIntoView({ behavior: "smooth", block: "center" }));
-      selectBackend(selected);
-    </script>
-  </body>
+function submitHome() {
+	navigate(homeInput.value);
+	homeInput.value = "";
+}
+
+address.addEventListener("keydown", event => {
+	if (event.key === "Enter") navigate(address.value);
+});
+
+homeInput.addEventListener("keydown", event => {
+	if (event.key === "Enter") submitHome();
+});
+
+pageUrl.addEventListener("keydown", event => {
+	if (event.key === "Enter") navigate(pageUrl.value);
+});
+
+document.getElementById("go").addEventListener("click", submitHome);
+document.getElementById("home-nav").addEventListener("click", goHome);
+document.getElementById("new-tab").addEventListener("click", goHome);
+document.getElementById("back").addEventListener("click", goBack);
+document.getElementById("browser-back").addEventListener("click", goBack);
+document.getElementById("forward").addEventListener("click", goForward);
+document.getElementById("browser-forward").addEventListener("click", goForward);
+document.getElementById("reload").addEventListener("click", reload);
+document.getElementById("browser-reload").addEventListener("click", reload);
+
+document.getElementById("settings-button").addEventListener("click", event => {
+	event.stopPropagation();
+	settings.classList.toggle("visible");
+});
+
+document.addEventListener("click", event => {
+	if (!settings.contains(event.target) && event.target.id !== "settings-button") settings.classList.remove("visible");
+});
+
+document.getElementById("backend").addEventListener("change", event => {
+	selectedBackend = event.target.value;
+	localStorage.setItem("vanillia-backend", selectedBackend);
+	showStatus(BACKENDS[selectedBackend].name + " selected");
+	if (currentUrl && browser.classList.contains("visible")) {
+		showStatus("Switching backend...");
+		frame.src = proxyUrl(currentUrl);
+	}
+});
+
+document.getElementById("https-toggle").addEventListener("click", event => {
+	useHttps = event.currentTarget.classList.toggle("on");
+});
+
+document.getElementById("tab-toggle").addEventListener("click", event => {
+	openNewTab = event.currentTarget.classList.toggle("on");
+});
+
+document.querySelectorAll(".quick-button").forEach(button => {
+	button.addEventListener("click", () => navigate(button.dataset.url));
+});
+
+frame.addEventListener("load", () => status.classList.remove("show"));
+
+window.addEventListener("keydown", event => {
+	if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "l") {
+		event.preventDefault();
+		address.focus();
+		address.select();
+	}
+	if ((event.altKey || event.metaKey) && event.key === "ArrowLeft") {
+		event.preventDefault();
+		goBack();
+	}
+	if ((event.altKey || event.metaKey) && event.key === "ArrowRight") {
+		event.preventDefault();
+		goForward();
+	}
+});
+</script>
+</body>
 </html>
