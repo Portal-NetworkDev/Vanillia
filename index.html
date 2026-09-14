@@ -76,7 +76,7 @@ select { border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; col
 		<button class="icon-button" id="back" title="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
 		<button class="icon-button" id="forward" title="Forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6 6"></path></svg></button>
 		<button class="icon-button" id="reload" title="Reload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15.3-6.3L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.3 6.3L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
-		<button class="icon-button" id="settings-button" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.56-1.03H6.6v-2.4h.24A1.7 1.7 0 0 0 8.4 10a1.7 1.7 0 0 0-.34-1.88L8 8.06l1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 12.67 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.03h.24v2.4h-.24A1.7 1.7 0 0 0 19.4 15Z"></path></svg></button>
+		<button class="icon-button" id="settings-button" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.56-1.03H6.6v-2.4h.24A1.7 1.7 0 0 0 8.4 10a1.7 1.7 0 0 0-.34-1.88L8 8.06l1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 12.67 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l-.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.03h.24v2.4h-.24A1.7 1.7 0 0 0 19.4 15Z"></path></svg></button>
 	</header>
 	<main id="content">
 		<section id="home">
@@ -93,7 +93,7 @@ select { border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; col
 		<section id="browser">
 			<div id="browserbar">
 				<button class="icon-button" id="browser-back" title="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
-				<button class="icon-button" id="browser-forward" title="Forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6 6"></path></svg></button>
+				<button class="icon-button" id="browser-forward" title="Forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6 6"></path></svg></button>
 				<button class="icon-button" id="browser-reload" title="Reload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15.3-6.3L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.3 6.3L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
 				<input id="page-url" type="text" autocomplete="off" spellcheck="false">
 			</div>
@@ -135,6 +135,11 @@ let selectedBackend = localStorage.getItem("vanillia-backend") || "vanillia";
 
 if (!BACKENDS[selectedBackend]) selectedBackend = "vanillia";
 backendSelect.value = selectedBackend;
+
+window.addEventListener("beforeunload", event => {
+	event.preventDefault();
+	event.returnValue = "";
+});
 
 function normalizeUrl(value) {
 	value = value.trim();
