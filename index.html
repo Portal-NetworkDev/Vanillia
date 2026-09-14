@@ -41,7 +41,8 @@ button { color: inherit; }
 #browser.visible { display: flex; }
 #browserbar { height: 42px; flex: 0 0 42px; display: flex; align-items: center; gap: 5px; padding: 0 8px; background: #fffaf0; border-bottom: 1px solid #ddd3c1; }
 #page-url { flex: 1; min-width: 0; height: 29px; border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; color: #817766; padding: 0 10px; font-size: 12px; outline: 0; }
-#frame { width: 100%; height: 100%; flex: 1; border: 0; background: white; }
+#page { width: 100%; height: 100%; flex: 1; overflow: auto; background: white; position: relative; }
+#page img, #page video, #page canvas { max-width: 100%; }
 #status { position: absolute; left: 12px; bottom: 12px; padding: 6px 9px; border: 1px solid #d7cbb7; border-radius: 6px; background: rgba(255,250,240,.94); color: #817766; font-size: 10px; pointer-events: none; opacity: 0; transition: opacity .15s ease; }
 #status.show { opacity: 1; }
 #settings { position: absolute; top: 50px; right: 12px; width: 280px; display: none; padding: 15px; border: 1px solid #d7cbb7; border-radius: 9px; background: #fffaf0; box-shadow: 0 12px 35px rgba(72,57,36,.18); z-index: 20; }
@@ -76,7 +77,7 @@ select { border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; col
 		<button class="icon-button" id="back" title="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
 		<button class="icon-button" id="forward" title="Forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6 6"></path></svg></button>
 		<button class="icon-button" id="reload" title="Reload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15.3-6.3L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.3 6.3L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
-		<button class="icon-button" id="settings-button" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.56-1.03H6.6v-2.4h.24A1.7 1.7 0 0 0 8.4 10a1.7 1.7 0 0 0-.34-1.88L8 8.06l1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 12.67 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l-.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.03h.24v2.4h-.24A1.7 1.7 0 0 0 19.4 15Z"></path></svg></button>
+		<button class="icon-button" id="settings-button" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.56-1.03H6.6v-2.4h.24A1.7 1.7 0 0 0 8.4 10a1.7 1.7 0 0 0-.34-1.88L8 8.06l1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 12.67 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0-1.88-.34l-.06.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.03h.24v2.4h-.24A1.7 1.7 0 0 0 19.4 15Z"></path></svg></button>
 	</header>
 	<main id="content">
 		<section id="home">
@@ -97,7 +98,7 @@ select { border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; col
 				<button class="icon-button" id="browser-reload" title="Reload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15.3-6.3L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.3 6.3L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
 				<input id="page-url" type="text" autocomplete="off" spellcheck="false">
 			</div>
-			<iframe id="frame" allow="fullscreen; autoplay; clipboard-read; clipboard-write"></iframe>
+			<div id="page"></div>
 		</section>
 		<div id="settings">
 			<div class="settings-title">Settings</div>
@@ -121,7 +122,7 @@ const browser = document.getElementById("browser");
 const address = document.getElementById("address");
 const homeInput = document.getElementById("home-input");
 const pageUrl = document.getElementById("page-url");
-const frame = document.getElementById("frame");
+const page = document.getElementById("page");
 const status = document.getElementById("status");
 const settings = document.getElementById("settings");
 const backendSelect = document.getElementById("backend");
@@ -162,7 +163,78 @@ function showStatus(text) {
 	showStatus.timer = setTimeout(() => status.classList.remove("show"), 1800);
 }
 
-function navigate(value, addHistory = true) {
+function runScript(script) {
+	return new Promise((resolve, reject) => {
+		const node = document.createElement("script");
+		for (const attribute of script.attributes) node.setAttribute(attribute.name, attribute.value);
+		node.textContent = script.textContent;
+		node.onload = resolve;
+		node.onerror = reject;
+		page.appendChild(node);
+		if (!node.src) resolve();
+	});
+}
+
+async function renderPage(html, baseUrl) {
+	const parsed = new DOMParser().parseFromString(html, "text/html");
+	page.replaceChildren();
+	page.dataset.url = baseUrl;
+
+	const headNodes = Array.from(parsed.head.children).filter(node => {
+		return !["TITLE", "BASE", "SCRIPT"].includes(node.tagName);
+	});
+	for (const node of headNodes) page.appendChild(document.importNode(node, true));
+
+	const bodyNodes = Array.from(parsed.body.childNodes);
+	const scripts = [];
+	for (const node of bodyNodes) {
+		if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "SCRIPT") {
+			scripts.push(node);
+			continue;
+		}
+		page.appendChild(document.importNode(node, true));
+	}
+
+	for (const script of scripts) {
+		try {
+			await runScript(script);
+		} catch {}
+	}
+
+	page.querySelectorAll("a[href]").forEach(link => {
+		link.addEventListener("click", event => {
+			if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+			const href = link.href;
+			if (!href || href.startsWith("javascript:")) return;
+			event.preventDefault();
+			navigate(href);
+		});
+	});
+
+	page.querySelectorAll("form").forEach(form => {
+		form.addEventListener("submit", event => {
+			if (event.defaultPrevented) return;
+			event.preventDefault();
+			const method = (form.method || "get").toLowerCase();
+			if (method !== "get") return;
+			const action = form.action || baseUrl;
+			const params = new URLSearchParams(new FormData(form));
+			const target = params.toString() ? action + (action.includes("?") ? "&" : "?") + params : action;
+			navigate(target);
+		});
+	});
+}
+
+async function loadPage(url) {
+	showStatus("Loading...");
+	const response = await fetch(proxyUrl(url), { credentials: "include" });
+	if (!response.ok) throw new Error("HTTP " + response.status);
+	const html = await response.text();
+	await renderPage(html, url);
+	status.classList.remove("show");
+}
+
+async function navigate(value, addHistory = true) {
 	const target = normalizeUrl(value);
 	if (!target) return;
 	currentUrl = target;
@@ -170,6 +242,7 @@ function navigate(value, addHistory = true) {
 	pageUrl.value = target;
 	home.style.display = "none";
 	browser.classList.add("visible");
+	document.querySelectorAll(".nav-button").forEach(button => button.classList.remove("active"));
 	if (addHistory) {
 		historyStack = historyStack.slice(0, historyIndex + 1);
 		historyStack.push(target);
@@ -180,8 +253,12 @@ function navigate(value, addHistory = true) {
 		window.open(targetUrl, "_blank");
 		return;
 	}
-	showStatus("Loading...");
-	frame.src = targetUrl;
+	try {
+		await loadPage(target);
+	} catch (error) {
+		showStatus("Failed to load page");
+		page.innerHTML = "<div style=\"padding:24px;font:14px system-ui;color:#514638\">Unable to load this page.</div>";
+	}
 }
 
 function goHome() {
@@ -207,8 +284,7 @@ function goForward() {
 
 function reload() {
 	if (!currentUrl) return;
-	showStatus("Reloading...");
-	frame.src = proxyUrl(currentUrl);
+	loadPage(currentUrl).catch(() => showStatus("Failed to reload page"));
 }
 
 function submitHome() {
@@ -253,7 +329,7 @@ document.getElementById("backend").addEventListener("change", event => {
 	showStatus(BACKENDS[selectedBackend].name + " selected");
 	if (currentUrl && browser.classList.contains("visible")) {
 		showStatus("Switching backend...");
-		frame.src = proxyUrl(currentUrl);
+		loadPage(currentUrl).catch(() => showStatus("Failed to switch backend"));
 	}
 });
 
@@ -268,8 +344,6 @@ document.getElementById("tab-toggle").addEventListener("click", event => {
 document.querySelectorAll(".quick-button").forEach(button => {
 	button.addEventListener("click", () => navigate(button.dataset.url));
 });
-
-frame.addEventListener("load", () => status.classList.remove("show"));
 
 window.addEventListener("keydown", event => {
 	if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "l") {
