@@ -1,0 +1,135 @@
+name: Upgrade Vanillia Settings
+
+on:
+  push:
+    paths:
+      - .github/workflows/settings-upgrade.yml
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Patch settings
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'index.html';
+          let content = fs.readFileSync(path, 'utf8');
+
+          const oldSettings = /<div id="settings">[\s\S]*?<\/div>\n\s*<div id="status">/;
+          const newSettings = `<div id="settings">
+          <div class="settings-title">Settings</div>
+          <div class="settings-section">Appearance</div>
+          <div class="setting"><span>Dark mode</span><button class="toggle" id="dark-toggle"></button></div>
+          <div class="setting"><span>Animated background</span><button class="toggle" id="animation-toggle"></button></div>
+          <div class="setting"><span>Force dark websites</span><button class="toggle" id="force-dark-toggle"></button></div>
+          <div class="setting"><span>Reduced motion</span><button class="toggle" id="motion-toggle"></button></div>
+          <div class="settings-section">Proxy</div>
+          <div class="setting"><span>Backend</span><select id="backend"><option value="vanillia">VanilliaPXY</option><option value="scramjet">Scramjet</option><option value="ultraviolet">Ultraviolet</option><option value="rammerhead">Rammerhead</option></select></div>
+          <div class="setting"><span>Use HTTPS</span><button class="toggle on" id="https-toggle"></button></div>
+          <div class="setting"><span>Ad blocker</span><button class="toggle on" id="adblock-toggle"></button></div>
+          <div class="settings-section">Features</div>
+          <div class="setting"><span>Games</span><button class="toggle" id="games-toggle"></button></div>
+          <div class="setting"><span>Movies</span><button class="toggle" id="movies-toggle"></button></div>
+          <div class="setting"><span>Gibby AI</span><button class="toggle" id="gibby-toggle"></button></div>
+          <div class="setting"><span>Open in new tab</span><button class="toggle" id="tab-toggle"></button></div>
+          </div>
+          <div id="status">`;
+          if (!oldSettings.test(content)) throw new Error('settings block not found');
+          content = content.replace(oldSettings, newSettings);
+
+          const style = `<style id="settings-upgrade-style">
+          .settings-section { margin: 13px 0 3px; padding-top: 10px; border-top: 1px solid #e5dccd; font-size: 10px; font-weight: 650; text-transform: uppercase; letter-spacing: .08em; color: #9b8e7b; }
+          .settings-section:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+          body.dark-mode, body.dark-mode #app { background: #24211d; color: #eee8dc; }
+          body.dark-mode #topbar { background: #2c2924; border-color: #464037; }
+          body.dark-mode .nav-button, body.dark-mode .icon-button { color: #bdb3a3; }
+          body.dark-mode .nav-button:hover, body.dark-mode .icon-button:hover { background: #3a352e; color: #fffaf0; border-color: #51493e; }
+          body.dark-mode .nav-button.active { background: #40392f; color: #fffaf0; }
+          body.dark-mode #address, body.dark-mode #search-box, body.dark-mode .quick-button, body.dark-mode #settings, body.dark-mode #page-url { background: #302c26; border-color: #4a4339; color: #eee8dc; }
+          body.dark-mode #address::placeholder, body.dark-mode #home-input::placeholder { color: #8f8679; }
+          body.dark-mode #home-input { color: #eee8dc; }
+          body.dark-mode .home-title { color: #f4efe3; }
+          body.dark-mode .quick-name { color: #ddd4c6; }
+          body.dark-mode .quick-url, body.dark-mode .setting, body.dark-mode .settings-section { color: #9f9587; }
+          body.dark-mode .setting { border-color: #464037; }
+          body.dark-mode select { background: #302c26; border-color: #4a4339; color: #ddd4c6; }
+          body.animated-bg #home::before { content: ""; position: absolute; inset: -25%; background: radial-gradient(circle at 20% 30%, rgba(169,153,126,.14), transparent 32%), radial-gradient(circle at 80% 70%, rgba(169,153,126,.10), transparent 30%); animation: vanillia-drift 18s ease-in-out infinite alternate; pointer-events: none; }
+          body.animated-bg #home-inner { position: relative; z-index: 1; }
+          @keyframes vanillia-drift { from { transform: translate3d(-2%, -1%, 0) scale(1); } to { transform: translate3d(2%, 1%, 0) scale(1.06); } }
+          @media (prefers-reduced-motion: reduce) { body.animated-bg #home::before { animation: none; } }
+          </style>`;
+          if (!content.includes('id="settings-upgrade-style"')) content = content.replace('</style>\n</head>', '</style>\n' + style + '\n</head>');
+
+          const script = `<script id="settings-upgrade-script">
+          (() => {
+              const keys = {
+                  dark: "vanillia-dark-mode",
+                  animation: "vanillia-animated-bg",
+                  forceDark: "vanillia-force-dark",
+                  motion: "vanillia-reduced-motion",
+                  adblock: "vanillia-adblock",
+                  games: "vanillia-games",
+                  movies: "vanillia-movies",
+                  gibby: "vanillia-gibby"
+              };
+              const defaults = { dark: false, animation: false, forceDark: false, motion: false, adblock: true, games: false, movies: false, gibby: false };
+              const read = key => localStorage.getItem(keys[key]) === null ? defaults[key] : localStorage.getItem(keys[key]) === "true";
+              const set = (key, value) => localStorage.setItem(keys[key], String(value));
+              const buttons = {
+                  dark: document.getElementById("dark-toggle"),
+                  animation: document.getElementById("animation-toggle"),
+                  forceDark: document.getElementById("force-dark-toggle"),
+                  motion: document.getElementById("motion-toggle"),
+                  adblock: document.getElementById("adblock-toggle"),
+                  games: document.getElementById("games-toggle"),
+                  movies: document.getElementById("movies-toggle"),
+                  gibby: document.getElementById("gibby-toggle")
+              };
+              const applyPageDark = () => {
+                  if (!page || !page.shadowRoot) return;
+                  let style = page.shadowRoot.getElementById("vanillia-force-dark");
+                  if (!read("forceDark")) { if (style) style.remove(); return; }
+                  if (!style) { style = document.createElement("style"); style.id = "vanillia-force-dark"; page.shadowRoot.appendChild(style); }
+                  style.textContent = `html, body { background: #181715 !important; color: #eee8dc !important; } body, main, header, footer, section, article, nav, aside, div, p, li, td, th, pre, code, input, textarea, select, button { background-color: #24211d !important; color: #eee8dc !important; border-color: #4a4339 !important; } a { color: #d8cdbb !important; } img, video, canvas { filter: brightness(.86) !important; }`;
+              };
+              const apply = () => {
+                  const dark = read("dark");
+                  document.body.classList.toggle("dark-mode", dark);
+                  document.body.classList.toggle("animated-bg", read("animation") && !read("motion"));
+                  Object.entries(buttons).forEach(([key, button]) => button && button.classList.toggle("on", read(key)));
+                  applyPageDark();
+              };
+              Object.entries(buttons).forEach(([key, button]) => {
+                  if (!button) return;
+                  button.addEventListener("click", () => { set(key, !read(key)); apply(); });
+              });
+              const observer = new MutationObserver(applyPageDark);
+              if (page) observer.observe(page, { childList: true, subtree: true });
+              apply();
+          })();
+          </script>`;
+          if (!content.includes('id="settings-upgrade-script"')) content = content.replace('</body>', script + '\n</body>');
+
+          fs.writeFileSync(path, content);
+          NODE
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html
+          git diff --cached --quiet || git commit -m "Expand Vanillia settings"
+          git push
+      - name: Remove workflow
+        run: |
+          rm .github/workflows/settings-upgrade.yml
+          git add .github/workflows/settings-upgrade.yml
+          git commit -m "Remove temporary settings workflow"
+          git push
