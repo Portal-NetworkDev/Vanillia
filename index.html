@@ -273,6 +273,10 @@ async function navigate(value, addHistory = true) {
 		historyIndex++;
 	}
 	const targetUrl = proxyUrl(target);
+	if (selectedBackend === "scramjet" || selectedBackend === "ultraviolet") {
+		window.location.href = targetUrl;
+		return;
+	}
 	if (openNewTab) {
 		window.open(targetUrl, "_blank");
 		return;
