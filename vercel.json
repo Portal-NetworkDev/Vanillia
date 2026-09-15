@@ -32,6 +32,26 @@
       "destination": "/engines/public/uv/:path*"
     },
     {
+      "source": "/uv.sw.js",
+      "destination": "/engines/public/uv/uv.sw.js"
+    },
+    {
+      "source": "/uv.bundle.js",
+      "destination": "/engines/public/uv/uv.bundle.js"
+    },
+    {
+      "source": "/uv.client.js",
+      "destination": "/engines/public/uv/uv.client.js"
+    },
+    {
+      "source": "/uv.config.js",
+      "destination": "/engines/public/uv/uv.config.js"
+    },
+    {
+      "source": "/uv.handler.js",
+      "destination": "/engines/public/uv/uv.handler.js"
+    },
+    {
       "source": "/sw.js",
       "destination": "/engines/public/sw.js"
     },
