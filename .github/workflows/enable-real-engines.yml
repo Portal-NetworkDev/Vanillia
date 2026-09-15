@@ -1,7 +1,9 @@
 name: Enable real proxy engines
 
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/enable-real-engines.yml
 
 permissions:
   contents: write
