@@ -1,0 +1,78 @@
+name: Fix proxy engine routes
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch Vercel routes
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'vercel.json';
+          const config = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const rewrites = config.rewrites || [];
+          const additions = [
+            { source: '/education', destination: '/api/scramjet' },
+            { source: '/classroom', destination: '/api/ultraviolet' }
+          ];
+          for (const addition of additions) {
+            if (!rewrites.some(r => r.source === addition.source)) rewrites.push(addition);
+          }
+          config.rewrites = rewrites;
+          fs.writeFileSync(path, JSON.stringify(config, null, 2) + '\n');
+          NODE
+      - name: Add engine handlers
+        run: |
+          mkdir -p api
+          cat > api/scramjet.js <<'NODE'
+          export default async function handler(req, res) {
+            const backend = process.env.SCRAMJET_BACKEND_URL;
+            if (!backend) {
+              res.statusCode = 503;
+              res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+              res.end('Scramjet backend is not configured.');
+              return;
+            }
+            const target = new URL(req.url.replace(/^\/api\/scramjet/, ''), backend);
+            const response = await fetch(target, { method: req.method, headers: req.headers });
+            res.statusCode = response.status;
+            response.headers.forEach((value, key) => res.setHeader(key, value));
+            res.end(Buffer.from(await response.arrayBuffer()));
+          }
+          NODE
+          cat > api/ultraviolet.js <<'NODE'
+          export default async function handler(req, res) {
+            const backend = process.env.ULTRAVIOLET_BACKEND_URL;
+            if (!backend) {
+              res.statusCode = 503;
+              res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+              res.end('Ultraviolet backend is not configured.');
+              return;
+            }
+            const target = new URL(req.url.replace(/^\/api\/ultraviolet/, ''), backend);
+            const response = await fetch(target, { method: req.method, headers: req.headers });
+            res.statusCode = response.status;
+            response.headers.forEach((value, key) => res.setHeader(key, value));
+            res.end(Buffer.from(await response.arrayBuffer()));
+          }
+          NODE
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add vercel.json api/scramjet.js api/ultraviolet.js
+          git commit -m "Fix Scramjet and Ultraviolet routes"
+          git push
+      - name: Remove workflow
+        run: |
+          rm .github/workflows/fix-engine-routes.yml
+          git add .github/workflows/fix-engine-routes.yml
+          git commit -m "Remove temporary engine route workflow"
+          git push
