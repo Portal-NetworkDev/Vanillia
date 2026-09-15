@@ -12,6 +12,30 @@
   ],
   "rewrites": [
     {
+      "source": "/baremux/:path*",
+      "destination": "/engines/public/baremux/:path*"
+    },
+    {
+      "source": "/epoxy/:path*",
+      "destination": "/engines/public/epoxy/:path*"
+    },
+    {
+      "source": "/libcurl/:path*",
+      "destination": "/engines/public/libcurl/:path*"
+    },
+    {
+      "source": "/scram/:path*",
+      "destination": "/engines/public/scram/:path*"
+    },
+    {
+      "source": "/uv/:path*",
+      "destination": "/engines/public/uv/:path*"
+    },
+    {
+      "source": "/sw.js",
+      "destination": "/engines/public/sw.js"
+    },
+    {
       "source": "/vanillia",
       "destination": "/api/vanillia"
     },
