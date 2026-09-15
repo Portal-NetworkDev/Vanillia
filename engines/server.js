@@ -5,11 +5,6 @@ import { join } from "node:path";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
-import { scramjetPath } from "@mercuryworkshop/scramjet/path";
-import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
-import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
-import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
-import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
 
 const publicPath = fileURLToPath(new URL("./public/", import.meta.url));
 const fastify = Fastify({
@@ -28,11 +23,11 @@ Object.assign(wisp.options, {
 });
 
 fastify.register(fastifyStatic, { root: publicPath, decorateReply: true });
-fastify.register(fastifyStatic, { root: scramjetPath, prefix: "/scram/", decorateReply: false });
-fastify.register(fastifyStatic, { root: libcurlPath, prefix: "/libcurl/", decorateReply: false });
-fastify.register(fastifyStatic, { root: baremuxPath, prefix: "/baremux/", decorateReply: false });
-fastify.register(fastifyStatic, { root: uvPath, prefix: "/uv/", decorateReply: false });
-fastify.register(fastifyStatic, { root: epoxyPath, prefix: "/epoxy/", decorateReply: false });
+fastify.register(fastifyStatic, { root: join(publicPath, "scram"), prefix: "/scram/", decorateReply: false });
+fastify.register(fastifyStatic, { root: join(publicPath, "libcurl"), prefix: "/libcurl/", decorateReply: false });
+fastify.register(fastifyStatic, { root: join(publicPath, "baremux"), prefix: "/baremux/", decorateReply: false });
+fastify.register(fastifyStatic, { root: join(publicPath, "uv"), prefix: "/uv/", decorateReply: false });
+fastify.register(fastifyStatic, { root: join(publicPath, "epoxy"), prefix: "/epoxy/", decorateReply: false });
 
 const sendEngine = async (request, reply, file) => {
   const target = new URL(request.url, "http://localhost").searchParams.get(file === "scramjet.html" ? "portal" : "class");
