@@ -3,420 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f4efe3">
 <title>Vanillia</title>
 <style>
-* { box-sizing: border-box; }
-html, body { margin: 0; width: 100%; height: 100%; background: #f4efe3; color: #29251f; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-body { overflow: hidden; }
-button, input { font: inherit; }
-button { color: inherit; }
-#app { width: 100%; height: 100%; display: flex; flex-direction: column; background: #f4efe3; }
-#topbar { height: 58px; flex: 0 0 58px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: #fffaf0; border-bottom: 1px solid #ddd3c1; }
-#nav { display: flex; align-items: center; gap: 5px; }
-.nav-button { height: 32px; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: #817766; cursor: pointer; font-size: 13px; }
-.nav-button:hover { background: #eee6d6; color: #40382d; }
-.nav-button.active { background: #e7ddc9; color: #29251f; }
-#address-wrap { flex: 1; display: flex; align-items: center; gap: 7px; min-width: 0; }
-#address { width: 100%; height: 36px; border: 1px solid #d7cbb7; border-radius: 7px; outline: none; background: #f8f3e9; color: #40382d; padding: 0 13px; font-size: 13px; transition: border-color .12s ease; }
-#address:focus { border-color: #a9987c; }
-#address::placeholder { color: #a69a88; }
-.icon-button { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #817766; cursor: pointer; }
-.icon-button:hover { background: #eee6d6; border-color: #d8cdbb; color: #40382d; }
-.icon-button svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
-#content { position: relative; flex: 1; min-height: 0; }
-#home { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: auto; }
-#home-inner { width: min(720px, calc(100% - 36px)); padding: 60px 0 100px; }
-.home-title { margin: 0 0 27px; font-size: 34px; font-weight: 650; letter-spacing: -1.5px; color: #29251f; }
-#search-box { display: flex; height: 48px; background: #fffaf0; border: 1px solid #d7cbb7; border-radius: 9px; overflow: hidden; }
-#home-input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #40382d; padding: 0 15px; font-size: 14px; }
-#home-input::placeholder { color: #a69a88; }
-#go { width: 66px; border: 0; border-left: 1px solid #d7cbb7; background: #eee6d6; color: #5a4e3e; cursor: pointer; }
-#go:hover { background: #e6dcc9; color: #29251f; }
-#quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-.quick-button { min-height: 68px; padding: 12px; text-align: left; border: 1px solid #ddd3c1; border-radius: 8px; background: #fffaf0; cursor: pointer; }
-.quick-button:hover { background: #f0e8d8; border-color: #cfc2ac; }
-.quick-name { display: block; font-size: 13px; color: #514638; margin-bottom: 4px; }
-.quick-url { display: block; font-size: 11px; color: #9b8e7b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#browser { position: absolute; inset: 0; display: none; flex-direction: column; background: #eee8dc; }
-#browser.visible { display: flex; }
-#browserbar { display: none; height: 0; flex: 0 0 0; align-items: center; gap: 5px; padding: 0 8px; background: #fffaf0; border-bottom: 1px solid #ddd3c1; }
-#page-url { flex: 1; min-width: 0; height: 29px; border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; color: #817766; padding: 0 10px; font-size: 12px; outline: 0; }
-#page { width: 100%; height: 100%; flex: 1; overflow: auto; background: white; position: relative; }
-#page img, #page video, #page canvas { max-width: 100%; }
-#status { position: absolute; left: 12px; bottom: 12px; padding: 6px 9px; border: 1px solid #d7cbb7; border-radius: 6px; background: rgba(255,250,240,.94); color: #817766; font-size: 10px; pointer-events: none; opacity: 0; transition: opacity .15s ease; }
-#status.show { opacity: 1; }
-#settings { position: absolute; top: 50px; right: 12px; width: 280px; display: none; padding: 15px; border: 1px solid #d7cbb7; border-radius: 9px; background: #fffaf0; box-shadow: 0 12px 35px rgba(72,57,36,.18); z-index: 20; }
-#settings.visible { display: block; }
-.settings-title { font-size: 13px; font-weight: 600; margin-bottom: 14px; color: #40382d; }
-.setting { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-top: 1px solid #e5dccd; font-size: 12px; color: #817766; }
-.setting:first-of-type { border-top: 0; }
-select { border: 1px solid #d7cbb7; border-radius: 6px; background: #f8f3e9; color: #5a4e3e; padding: 5px 7px; outline: none; }
-.toggle { width: 32px; height: 18px; border-radius: 20px; border: 0; background: #cfc4b1; position: relative; cursor: pointer; }
-.toggle::after { content: ""; position: absolute; width: 14px; height: 14px; top: 2px; left: 2px; border-radius: 50%; background: #8e816e; transition: transform .12s ease; }
-.toggle.on { background: #a9997e; }
-.toggle.on::after { transform: translateX(14px); background: #fffaf0; }
-@media (max-width: 650px) {
-	#topbar { gap: 8px; padding: 0 9px; }
-	#nav { display: none; }
-	.home-title { font-size: 29px; }
-	#quick { grid-template-columns: 1fr; }
-	#home-inner { padding-top: 35px; }
-}
+:root{--bg:#f1eadb;--chrome:#fffaf0;--chrome-2:#f8f1e4;--surface:#fffdf7;--surface-2:#eee5d4;--line:#d8ccb8;--line-2:#e5dccb;--text:#2d2923;--muted:#817666;--muted-2:#a19380;--hover:#eee6d7;--active:#e4d8c3;--shadow:0 14px 42px rgba(68,53,34,.14)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit;color:inherit}button{border:0}#app{height:100%;display:flex;flex-direction:column;background:var(--bg)}
+.browser-chrome{position:relative;z-index:20;background:var(--chrome);border-bottom:1px solid var(--line);box-shadow:0 2px 12px rgba(68,53,34,.06)}
+.titlebar{height:43px;display:flex;align-items:flex-end;padding:0 9px;gap:8px}.tabs{height:36px;display:flex;align-items:flex-end;gap:4px;min-width:0;flex:1;overflow:hidden}.tab{height:35px;min-width:150px;max-width:230px;display:flex;align-items:center;gap:9px;padding:0 11px;border:1px solid transparent;border-bottom:0;border-radius:9px 9px 0 0;background:transparent;color:var(--muted);cursor:pointer;position:relative}.tab:hover{background:var(--hover);color:var(--text)}.tab.active{background:var(--surface);border-color:var(--line);color:var(--text)}.tab-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left;font-size:12px}.tab-close{width:20px;height:20px;border-radius:5px;background:transparent;display:grid;place-items:center;color:var(--muted-2);font-size:15px}.tab-close:hover{background:var(--hover);color:var(--text)}.tab-dot{width:10px;height:10px;border-radius:50%;background:#c9bba5;flex:0 0 auto}.new-tab{width:32px;height:32px;margin-bottom:2px;border-radius:7px;background:transparent;color:var(--muted);cursor:pointer;font-size:20px}.new-tab:hover{background:var(--hover);color:var(--text)}.window-space{width:70px;flex:0 0 70px}
+.toolbar{height:51px;display:flex;align-items:center;gap:5px;padding:0 10px;background:var(--chrome)}.nav-btn{width:33px;height:33px;display:grid;place-items:center;border-radius:7px;background:transparent;color:var(--muted);cursor:pointer}.nav-btn:hover{background:var(--hover);color:var(--text)}.nav-btn:disabled{opacity:.38;cursor:default;background:transparent}.nav-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.address-wrap{height:36px;display:flex;align-items:center;flex:1;min-width:100px;background:var(--chrome-2);border:1px solid var(--line);border-radius:9px;margin:0 4px;padding:0 5px;transition:.12s ease}.address-wrap:focus-within{border-color:#b9a88e;background:var(--surface)}.address-icon{width:29px;height:29px;display:grid;place-items:center;color:var(--muted);flex:0 0 auto}.address-icon svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.address{height:100%;flex:1;min-width:0;border:0;outline:0;background:transparent;padding:0 7px;font-size:13px}.address::placeholder{color:var(--muted-2)}.address-action{width:29px;height:29px;display:grid;place-items:center;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-size:18px}.address-action:hover{background:var(--hover);color:var(--text)}.toolbar-right{display:flex;align-items:center;gap:2px}.bookmarks{height:31px;display:flex;align-items:center;gap:3px;padding:0 12px;background:var(--chrome-2);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line);overflow:auto;scrollbar-width:none}.bookmarks::-webkit-scrollbar{display:none}.bookmark{height:25px;padding:0 9px;border-radius:6px;background:transparent;color:var(--muted);font-size:11px;white-space:nowrap;cursor:pointer}.bookmark:hover{background:var(--hover);color:var(--text)}
+#workspace{position:relative;flex:1;min-height:0;overflow:hidden}.newtab{position:absolute;inset:0;display:flex;justify-content:center;overflow:auto;background:radial-gradient(circle at 50% 18%,rgba(255,253,247,.8),transparent 40%),var(--bg)}.newtab-inner{width:min(900px,calc(100% - 42px));padding:72px 0 80px}.brand{display:flex;align-items:center;gap:12px;margin-bottom:29px}.brand-mark{width:42px;height:42px;border-radius:12px;background:#e4d8c3;border:1px solid #d2c4ac;display:grid;place-items:center;color:#5c503f;font-weight:750;font-size:17px}.brand-name{font-size:15px;font-weight:650}.brand-sub{font-size:11px;color:var(--muted-2);margin-top:2px}.hero{font-size:42px;line-height:1.04;letter-spacing:-2px;font-weight:650;margin:0 0 28px;max-width:650px}.search{height:54px;display:flex;align-items:center;background:rgba(255,253,247,.88);border:1px solid var(--line);border-radius:12px;box-shadow:0 7px 26px rgba(68,53,34,.08);padding:0 7px}.search:focus-within{border-color:#b8a88f;box-shadow:0 9px 30px rgba(68,53,34,.11)}.search svg{width:19px;height:19px;margin:0 7px;color:var(--muted);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.search input{height:100%;flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:14px}.search input::placeholder{color:#9f927f}.search-go{height:40px;padding:0 17px;border-radius:8px;background:var(--active);color:#514637;cursor:pointer;font-size:12px;font-weight:600}.search-go:hover{background:#daceb8}.quick-title{margin:27px 0 9px;font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--muted-2)}.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.quick{min-height:72px;padding:12px;text-align:left;border:1px solid var(--line-2);border-radius:9px;background:rgba(255,250,240,.72);cursor:pointer}.quick:hover{background:var(--surface);border-color:var(--line)}.quick-name{display:block;font-size:12px;font-weight:600;margin-bottom:5px}.quick-url{display:block;color:var(--muted-2);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.page-shell{position:absolute;inset:0;display:none;background:#fff}.page-shell.visible{display:block}.page-frame{width:100%;height:100%;border:0;background:white;display:block}.page-loading{position:absolute;left:0;top:0;height:2px;width:0;background:#a9997e;transition:width .18s ease;z-index:3}.status{position:absolute;left:14px;bottom:14px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:rgba(255,250,240,.96);color:var(--muted);font-size:10px;box-shadow:var(--shadow);opacity:0;transform:translateY(4px);transition:.15s ease;pointer-events:none}.status.show{opacity:1;transform:none}
+.engine{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;padding:3px;border:1px solid var(--line);border-radius:9px;background:rgba(255,250,240,.96);box-shadow:var(--shadow);z-index:8}.engine button{height:27px;padding:0 9px;border-radius:6px;background:transparent;color:var(--muted);font-size:10px;cursor:pointer}.engine button:hover{background:var(--hover);color:var(--text)}.engine button.active{background:var(--active);color:var(--text);font-weight:650}
+.panel{position:absolute;right:13px;top:9px;width:300px;max-height:calc(100% - 18px);overflow:auto;padding:15px;border:1px solid var(--line);border-radius:11px;background:rgba(255,250,240,.98);box-shadow:0 18px 50px rgba(68,53,34,.2);z-index:30;display:none}.panel.visible{display:block}.panel-title{font-size:13px;font-weight:700;margin-bottom:13px}.panel-section{padding:12px 0;border-top:1px solid var(--line-2)}.panel-section:first-of-type{border-top:0;padding-top:0}.panel-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--muted-2);margin-bottom:8px}.panel-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 0;font-size:12px;color:var(--muted)}.panel-row strong{color:var(--text);font-weight:600}.panel-btn{height:32px;padding:0 10px;border-radius:7px;background:var(--surface-2);border:1px solid var(--line);cursor:pointer;font-size:11px}.panel-btn:hover{background:var(--active)}.select{height:30px;border:1px solid var(--line);border-radius:6px;background:var(--chrome-2);outline:0;padding:0 7px;font-size:11px}.switch{width:32px;height:18px;border-radius:99px;background:#cfc3ae;position:relative;cursor:pointer}.switch:after{content:"";position:absolute;width:14px;height:14px;top:2px;left:2px;border-radius:50%;background:#fffaf0;transition:.12s}.switch.on{background:#a9997e}.switch.on:after{transform:translateX(14px)}
+.apps{position:absolute;right:8px;top:44px;width:290px;padding:13px;border:1px solid var(--line);border-radius:11px;background:rgba(255,250,240,.98);box-shadow:var(--shadow);z-index:31;display:none}.apps.visible{display:block}.apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.app{min-height:70px;padding:10px 7px;border:1px solid var(--line-2);border-radius:8px;background:var(--surface);cursor:pointer;text-align:center}.app:hover{background:var(--hover);border-color:var(--line)}.app-icon{width:30px;height:30px;margin:0 auto 7px;border-radius:8px;background:var(--active);display:grid;place-items:center;color:#5b4e3d}.app span{display:block;font-size:10px;color:var(--muted)}.toast{position:absolute;left:50%;bottom:20px;transform:translate(-50%,10px);padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:rgba(255,250,240,.97);box-shadow:var(--shadow);color:var(--muted);font-size:10px;opacity:0;pointer-events:none;transition:.16s;z-index:50}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:760px){.titlebar{padding-left:4px}.tab{min-width:125px}.window-space{display:none}.toolbar{padding:0 5px}.toolbar-right .hide-mobile{display:none}.bookmarks{display:none}.newtab-inner{padding-top:48px}.hero{font-size:32px}.quick-grid{grid-template-columns:repeat(2,1fr)}.engine{right:8px}.panel{right:8px;width:min(300px,calc(100% - 16px))}}
 </style>
-<style id="settings-upgrade-style">.settings-section { margin: 13px 0 3px; padding-top: 10px; border-top: 1px solid #e5dccd; font-size: 10px; font-weight: 650; text-transform: uppercase; letter-spacing: .08em; color: #9b8e7b; }.settings-section:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }body.dark-mode, body.dark-mode #app { background: #24211d; color: #eee8dc; }body.dark-mode #topbar { background: #2c2924; border-color: #464037; }body.dark-mode .nav-button, body.dark-mode .icon-button { color: #bdb3a3; }body.dark-mode .nav-button:hover, body.dark-mode .icon-button:hover { background: #3a352e; color: #fffaf0; border-color: #51493e; }body.dark-mode .nav-button.active { background: #40392f; color: #fffaf0; }body.dark-mode #address, body.dark-mode #search-box, body.dark-mode .quick-button, body.dark-mode #settings, body.dark-mode #page-url { background: #302c26; border-color: #4a4339; color: #eee8dc; }body.dark-mode #address::placeholder, body.dark-mode #home-input::placeholder { color: #8f8679; }body.dark-mode #home-input { color: #eee8dc; }body.dark-mode .home-title { color: #f4efe3; }body.dark-mode .quick-name { color: #ddd4c6; }body.dark-mode .quick-url, body.dark-mode .setting, body.dark-mode .settings-section { color: #9f9587; }body.dark-mode .setting { border-color: #464037; }body.dark-mode select { background: #302c26; border-color: #4a4339; color: #ddd4c6; }body.animated-bg #home::before { content: ""; position: absolute; inset: -25%; background: radial-gradient(circle at 20% 30%, rgba(169,153,126,.14), transparent 32%), radial-gradient(circle at 80% 70%, rgba(169,153,126,.10), transparent 30%); animation: vanillia-drift 18s ease-in-out infinite alternate; pointer-events: none; }body.animated-bg #home-inner { position: relative; z-index: 1; }@keyframes vanillia-drift { from { transform: translate3d(-2%, -1%, 0) scale(1); } to { transform: translate3d(2%, 1%, 0) scale(1.06); } }@media (prefers-reduced-motion: reduce) { body.animated-bg #home::before { animation: none; } }</style>
 </head>
 <body>
 <div id="app">
-	<header id="topbar">
-		<nav id="nav">
-			<button class="nav-button active" id="home-nav">Home</button>
-			<button class="nav-button" id="new-tab">New Tab</button>
-		</nav>
-		<div id="address-wrap">
-			<input id="address" type="text" autocomplete="off" spellcheck="false" placeholder="Enter a URL or search">
-		</div>
-		<button class="icon-button" id="back" title="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
-		<button class="icon-button" id="forward" title="Forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6 6"></path></svg></button>
-		<button class="icon-button" id="reload" title="Reload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15.3-6.3L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.3 6.3L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
-		<button class="icon-button" id="settings-button" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.56-1.03H6.6v-2.4h.24A1.7 1.7 0 0 0 8.4 10a1.7 1.7 0 0 0-.34-1.88L8 8.06l1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 12.67 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0-1.88-.34l-.06.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.03h.24v2.4h-.24A1.7 1.7 0 0 0 19.4 15Z"></path></svg></button>
-	</header>
-	<main id="content">
-		<section id="home">
-			<div id="home-inner">
-				<h1 class="home-title">Browse without the noise.</h1>
-				<div id="search-box"><input id="home-input" type="text" autocomplete="off" spellcheck="false" placeholder="Enter a URL or search the web"><button id="go">Go</button></div>
-				<div id="quick">
-					<button class="quick-button" data-url="https://example.com"><span class="quick-name">Example</span><span class="quick-url">example.com</span></button>
-					<button class="quick-button" data-url="https://wikipedia.org"><span class="quick-name">Wikipedia</span><span class="quick-url">wikipedia.org</span></button>
-					<button class="quick-button" data-url="https://github.com"><span class="quick-name">GitHub</span><span class="quick-url">github.com</span></button>
-				</div>
-			</div>
-		</section>
-		<section id="browser">
-			<div id="browserbar">
-				<button class="icon-button" id="browser-back" title="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
-				<button class="icon-button" id="browser-forward" title="Forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6 6"></path></svg></button>
-				<button class="icon-button" id="browser-reload" title="Reload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15.3-6.3L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.3 6.3L21 16"></path><path d="M21 21v-5h-5"></path></svg></button>
-				<input id="page-url" type="text" autocomplete="off" spellcheck="false">
-			</div>
-			<div id="page"></div>
-		</section>
-		<div id="settings">
-<div class="settings-title">Settings</div>
-<div class="settings-section">Appearance</div>
-<div class="setting"><span>Dark mode</span><button class="toggle" id="dark-toggle"></button></div>
-<div class="setting"><span>Animated background</span><button class="toggle" id="animation-toggle"></button></div>
-<div class="setting"><span>Force dark websites</span><button class="toggle" id="force-dark-toggle"></button></div>
-<div class="setting"><span>Reduced motion</span><button class="toggle" id="motion-toggle"></button></div>
-<div class="settings-section">Proxy</div>
-<div class="setting"><span>Backend</span><select id="backend"><option value="vanillia">VanilliaPXY</option><option value="scramjet">Scramjet</option><option value="ultraviolet">Ultraviolet</option><option value="rammerhead">Rammerhead</option></select></div>
-<div class="setting"><span>Use HTTPS</span><button class="toggle on" id="https-toggle"></button></div>
-<div class="setting"><span>Ad blocker</span><button class="toggle on" id="adblock-toggle"></button></div>
-<div class="settings-section">Features</div>
-<div class="setting"><span>Games</span><button class="toggle" id="games-toggle"></button></div>
-<div class="setting"><span>Movies</span><button class="toggle" id="movies-toggle"></button></div>
-<div class="setting"><span>Gibby AI</span><button class="toggle" id="gibby-toggle"></button></div>
-<div class="setting"><span>Open in new tab</span><button class="toggle" id="tab-toggle"></button></div>
-</div>
-<div id="status"></div>
-	</main>
-</div>
+<header class="browser-chrome">
+<div class="titlebar"><div class="tabs" id="tabs"></div><button class="new-tab" id="new-tab" title="New tab" aria-label="New tab">+</button><div class="window-space"></div></div>
+<div class="toolbar">
+<button class="nav-btn" id="back" title="Back"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><button class="nav-btn" id="forward" title="Forward"><svg viewBox="0 0 24 24"><path d="m9 18 6-6 6"/></svg></button><button class="nav-btn" id="reload" title="Reload"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-13.7-5.7L4 8"/><path d="M4 4v4h4"/><path d="M4 12a8 8 0 0 0 13.7 5.7L20 16"/><path d="M20 20v-4h-4"/></svg></button><button class="nav-btn" id="home" title="Home"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></button>
+<div class="address-wrap"><div class="address-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-3Z"/><path d="m9.5 12 1.7 1.7 3.6-3.8"/></svg></div><input class="address" id="address" autocomplete="off" spellcheck="false" placeholder="Search or enter URL"><button class="address-action" id="bookmark" title="Bookmark">☆</button></div>
+<div class="toolbar-right"><button class="nav-btn hide-mobile" id="history" title="History"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/><path d="M12 7v5l3 2"/></svg></button><button class="nav-btn" id="apps-button" title="Apps"><svg viewBox="0 0 24 24"><path d="M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z"/></svg></button><button class="nav-btn" id="settings-button" title="Settings"><svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19 13.4a7.8 7.8 0 0 0 0-2.8l-2-1.3 2-3.4-2.3-1a8 8 0 0 0-2.4-1.4L14 3h-4l-.3 2.5A8 8 0 0 0 7.3 7L5 5.9l-2 3.4 2 1.3a7.8 7.8 0 0 0 0 2.8l-2 1.3 2 3.4 2.3-1a8 8 0 0 0 2.4 1.4l.3 2.5h4l.3-2.5a8 8 0 0 0 2.4-1.4l2.3 1 2-3.4-2-1.3Z"/></svg></button></div>
+</div><div class="bookmarks" id="bookmarks"></div>
+</header>
+<main id="workspace">
+<section class="newtab" id="newtab"><div class="newtab-inner"><div class="brand"><div class="brand-mark">V</div><div><div class="brand-name">Vanillia</div><div class="brand-sub">A quieter way to browse.</div></div></div><h1 class="hero">Browse without the noise.</h1><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="newtab-search" autocomplete="off" spellcheck="false" placeholder="Search the web, enter a URL, or type a query"><button class="search-go" id="search-go">Go</button></div><div class="quick-title">Quick access</div><div class="quick-grid"><button class="quick" data-url="https://google.com"><span class="quick-name">Google</span><span class="quick-url">google.com</span></button><button class="quick" data-url="https://wikipedia.org"><span class="quick-name">Wikipedia</span><span class="quick-url">wikipedia.org</span></button><button class="quick" data-url="https://github.com"><span class="quick-name">GitHub</span><span class="quick-url">github.com</span></button><button class="quick" data-url="https://youtube.com"><span class="quick-name">YouTube</span><span class="quick-url">youtube.com</span></button></div></div></section>
+<section class="page-shell" id="page-shell"><div class="page-loading" id="page-loading"></div><iframe class="page-frame" id="page-frame" title="Vanillia browser page" referrerpolicy="no-referrer"></iframe></section>
+<div class="engine" id="engine"><button class="active" data-engine="vanillia">Vanillia</button><button data-engine="uv">UV</button><button data-engine="scramjet">SJ</button></div>
+<div class="panel" id="settings"><div class="panel-title">Vanillia settings</div><div class="panel-section"><div class="panel-label">Appearance</div><div class="panel-row"><span>Theme</span><strong>Vanilla Cream</strong></div><div class="panel-row"><span>Soft background</span><button class="switch on" id="soft-bg"></button></div></div><div class="panel-section"><div class="panel-label">Browsing</div><div class="panel-row"><span>Default engine</span><select class="select" id="engine-select"><option value="vanillia">VanilliaPXY</option><option value="uv">Ultraviolet</option><option value="scramjet">Scramjet</option></select></div><div class="panel-row"><span>Clear local history</span><button class="panel-btn" id="clear-history">Clear</button></div></div><div class="panel-section"><div class="panel-label">About</div><div class="panel-row"><span>Version</span><strong>1.0</strong></div><div class="panel-row"><span>Proxy</span><strong>VanilliaPXY</strong></div></div></div>
+<div class="apps" id="apps"><div class="panel-title">Vanillia apps</div><div class="apps-grid"><button class="app" data-action="new"><div class="app-icon">+</div><span>New tab</span></button><button class="app" data-action="home"><div class="app-icon">⌂</div><span>Home</span></button><button class="app" data-action="history"><div class="app-icon">↶</div><span>History</span></button><button class="app" data-action="settings"><div class="app-icon">⚙</div><span>Settings</span></button><button class="app" data-action="gravity"><div class="app-icon">G</div><span>Gravity Lab</span></button><button class="app" data-action="voxels"><div class="app-icon">V</div><span>Voxel Worlds</span></button></div></div>
+<div class="status" id="status"></div><div class="toast" id="toast"></div>
+</main></div>
 <script>
-(() => {
-    const host = document.getElementById("page");
-    if (!host || host.shadowRoot) return;
-    const shadow = host.attachShadow({ mode: "open" });
-    host.replaceChildren = (...nodes) => shadow.replaceChildren(...nodes);
-    host.appendChild = node => shadow.appendChild(node);
-    host.append = (...nodes) => shadow.append(...nodes);
-    host.querySelectorAll = (...args) => shadow.querySelectorAll(...args);
-    host.querySelector = (...args) => shadow.querySelector(...args);
-})();
+const state={tabs:[],active:0,engine:localStorage.getItem('vanillia-engine')||'vanillia',history:JSON.parse(localStorage.getItem('vanillia-history')||'[]'),bookmarks:JSON.parse(localStorage.getItem('vanillia-bookmarks')||'[]')};const $=id=>document.getElementById(id);const tabs=$('tabs'),newtab=$('newtab'),pageShell=$('page-shell'),pageFrame=$('page-frame'),address=$('address'),search=$('newtab-search'),status=$('status'),toast=$('toast'),loading=$('page-loading'),settings=$('settings'),apps=$('apps');
+function normalize(v){v=v.trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(v.includes('.')&&!v.includes(' '))return 'https://'+v;return 'https://www.google.com/search?q='+encodeURIComponent(v)}function proxyUrl(url){return '/api/vanillia?url='+encodeURIComponent(url)}function save(){localStorage.setItem('vanillia-history',JSON.stringify(state.history.slice(-100)));localStorage.setItem('vanillia-bookmarks',JSON.stringify(state.bookmarks))}
+function renderTabs(){tabs.innerHTML='';state.tabs.forEach((tab,i)=>{const el=document.createElement('div');el.className='tab'+(i===state.active?' active':'');el.innerHTML='<span class="tab-dot"></span><span class="tab-title"></span><button class="tab-close" title="Close">×</button>';el.querySelector('.tab-title').textContent=tab.title||'New Tab';el.addEventListener('click',e=>{if(e.target.closest('.tab-close'))return;state.active=i;showTab()});el.querySelector('.tab-close').addEventListener('click',e=>{e.stopPropagation();closeTab(i)});tabs.appendChild(el)})}function addTab(url=''){state.tabs.push({title:'New Tab',url});state.active=state.tabs.length-1;renderTabs();showTab()}function closeTab(i){if(state.tabs.length===1){state.tabs[0]={title:'New Tab',url:''};state.active=0;showTab();return}state.tabs.splice(i,1);if(state.active>=state.tabs.length)state.active=state.tabs.length-1;renderTabs();showTab()}
+function showTab(){const tab=state.tabs[state.active]||state.tabs[0];if(!tab){addTab();return}renderTabs();if(tab.url){newtab.style.display='none';pageShell.classList.add('visible');address.value=tab.url;loadFrame(tab.url,false)}else{newtab.style.display='flex';pageShell.classList.remove('visible');address.value='';pageFrame.src='about:blank'}}function loadFrame(url,record=true){url=normalize(url);if(!url)return;if(record){const tab=state.tabs[state.active];tab.url=url;tab.title=new URL(url).hostname.replace(/^www\./,'')||'Page';state.history.push({url,title:tab.title,time:Date.now()});save();renderTabs()}newtab.style.display='none';pageShell.classList.add('visible');address.value=url;statusText('Loading '+new URL(url).hostname+'…');loading.style.width='20%';setTimeout(()=>loading.style.width='68%',120);pageFrame.onload=()=>{loading.style.width='100%';setTimeout(()=>loading.style.width='0',180);statusText('Loaded');setTimeout(()=>status.classList.remove('show'),900)};pageFrame.onerror=()=>{loading.style.width='0';statusText('The page could not be loaded')};pageFrame.src=proxyUrl(url)}function navigate(v){const url=normalize(v);if(url)loadFrame(url,true)}function statusText(t){status.textContent=t;status.classList.add('show')}function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),1400)}function togglePanel(panel){const other=panel===settings?apps:settings;other.classList.remove('visible');panel.classList.toggle('visible')}
+function renderBookmarks(){const bar=$('bookmarks');bar.innerHTML='';const items=state.bookmarks.length?state.bookmarks:[{title:'GitHub',url:'https://github.com'},{title:'Wikipedia',url:'https://wikipedia.org'},{title:'YouTube',url:'https://youtube.com'}];items.forEach(item=>{const b=document.createElement('button');b.className='bookmark';b.textContent=item.title;b.onclick=()=>navigate(item.url);bar.appendChild(b)})}
+$('new-tab').onclick=()=>addTab();$('home').onclick=()=>{const tab=state.tabs[state.active];tab.url='';tab.title='New Tab';showTab()};$('back').onclick=()=>{try{pageFrame.contentWindow.history.back()}catch{}};$('forward').onclick=()=>{try{pageFrame.contentWindow.history.forward()}catch{}};$('reload').onclick=()=>{if(state.tabs[state.active]?.url)loadFrame(state.tabs[state.active].url,false)};$('bookmark').onclick=()=>{const tab=state.tabs[state.active];if(!tab?.url)return showToast('Nothing to bookmark');const title=tab.title||new URL(tab.url).hostname;state.bookmarks.push({title,url:tab.url});save();renderBookmarks();showToast('Bookmarked '+title)};
+$('settings-button').onclick=()=>togglePanel(settings);$('apps-button').onclick=()=>togglePanel(apps);$('history').onclick=()=>showToast(state.history.length+' history entries');document.addEventListener('click',e=>{if(!e.target.closest('#settings')&&!e.target.closest('#settings-button'))settings.classList.remove('visible');if(!e.target.closest('#apps')&&!e.target.closest('#apps-button'))apps.classList.remove('visible')});address.addEventListener('keydown',e=>{if(e.key==='Enter'){navigate(address.value);address.blur()}});search.addEventListener('keydown',e=>{if(e.key==='Enter')navigate(search.value)});$('search-go').onclick=()=>navigate(search.value);document.querySelectorAll('.quick').forEach(b=>b.onclick=()=>navigate(b.dataset.url));
+document.querySelectorAll('.engine button').forEach(b=>b.onclick=()=>{state.engine=b.dataset.engine;localStorage.setItem('vanillia-engine',state.engine);document.querySelectorAll('.engine button').forEach(x=>x.classList.toggle('active',x===b));$('engine-select').value=state.engine;showToast('Engine: '+b.textContent)});$('engine-select').value=state.engine;$('engine-select').onchange=e=>{state.engine=e.target.value;localStorage.setItem('vanillia-engine',state.engine);document.querySelectorAll('.engine button').forEach(x=>x.classList.toggle('active',x.dataset.engine===state.engine))};$('soft-bg').onclick=()=>{$('soft-bg').classList.toggle('on');document.body.style.setProperty('--bg',$('soft-bg').classList.contains('on')?'#f1eadb':'#eee8dc')};$('clear-history').onclick=()=>{state.history=[];save();showToast('History cleared')};
+document.querySelectorAll('.app').forEach(b=>b.onclick=()=>{const a=b.dataset.action;if(a==='new')addTab();if(a==='home')$('home').click();if(a==='settings')togglePanel(settings);if(a==='history')showToast(state.history.length+' history entries');if(a==='gravity')navigate('https://gravitylab.portal-network.com');if(a==='voxels')navigate('https://portal-network.com/voxels/')});window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='l'){e.preventDefault();address.focus();address.select()}if((e.ctrlKey||e.metaKey)&&e.key==='t'){e.preventDefault();addTab()}if((e.ctrlKey||e.metaKey)&&e.key==='w'){e.preventDefault();closeTab(state.active)}});state.tabs=[{title:'New Tab',url:''}];renderBookmarks();renderTabs();showTab();
 </script>
-<script>
-const BACKENDS = {
-	vanillia: { name: "VanilliaPXY", base: "/", route: "vanillia?url=" },
-	scramjet: { name: "Scramjet", route: "education?portal=" },
-	ultraviolet: { name: "Ultraviolet", route: "classroom?class=" },
-	rammerhead: { name: "Rammerhead", route: "teach?learn=" }
-};
-
-const home = document.getElementById("home");
-const browser = document.getElementById("browser");
-const address = document.getElementById("address");
-const homeInput = document.getElementById("home-input");
-const pageUrl = document.getElementById("page-url");
-const page = document.getElementById("page");
-const status = document.getElementById("status");
-const settings = document.getElementById("settings");
-const backendSelect = document.getElementById("backend");
-
-let currentUrl = "";
-let historyStack = [];
-let historyIndex = -1;
-let openNewTab = false;
-let useHttps = true;
-let selectedBackend = localStorage.getItem("vanillia-backend") || "vanillia";
-
-if (!BACKENDS[selectedBackend]) selectedBackend = "vanillia";
-backendSelect.value = selectedBackend;
-
-window.addEventListener("beforeunload", event => {
-	event.preventDefault();
-	event.returnValue = "";
-});
-
-function normalizeUrl(value) {
-	value = value.trim();
-	if (!value) return "";
-	if (/^https?:\/\//i.test(value)) return value;
-	if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(value)) return (useHttps ? "https://" : "http://") + value;
-	return "https://www.google.com/search?q=" + encodeURIComponent(value);
-}
-
-function proxyUrl(url) {
-	const backend = BACKENDS[selectedBackend];
-	const base = backend.base || (useHttps ? window.location.protocol : "http:") + "//" + window.location.host + "/";
-	return base + backend.route + encodeURIComponent(url);
-}
-
-function showStatus(text) {
-	status.textContent = text;
-	status.classList.add("show");
-	clearTimeout(showStatus.timer);
-	showStatus.timer = setTimeout(() => status.classList.remove("show"), 1800);
-}
-
-function runScript(script) {
-	return new Promise((resolve, reject) => {
-		const node = document.createElement("script");
-		for (const attribute of script.attributes) node.setAttribute(attribute.name, attribute.value);
-		node.textContent = script.textContent;
-		node.onload = resolve;
-		node.onerror = reject;
-		page.appendChild(node);
-		if (!node.src) resolve();
-	});
-}
-
-async function renderPage(html, baseUrl) {
-	const parsed = new DOMParser().parseFromString(html, "text/html");
-	page.replaceChildren();
-	page.dataset.url = baseUrl;
-
-	const headNodes = Array.from(parsed.head.children).filter(node => {
-		return !["TITLE", "BASE", "SCRIPT"].includes(node.tagName);
-	});
-	for (const node of headNodes) page.appendChild(document.importNode(node, true));
-
-	const bodyNodes = Array.from(parsed.body.childNodes);
-	const scripts = [];
-	for (const node of bodyNodes) {
-		if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "SCRIPT") {
-			scripts.push(node);
-			continue;
-		}
-		page.appendChild(document.importNode(node, true));
-	}
-
-	for (const script of scripts) {
-		try {
-			await runScript(script);
-		} catch {}
-	}
-
-	page.querySelectorAll("a[href]").forEach(link => {
-		link.addEventListener("click", event => {
-			if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-			const href = link.href;
-			if (!href || href.startsWith("javascript:")) return;
-			event.preventDefault();
-			navigate(href);
-		});
-	});
-
-	page.querySelectorAll("form").forEach(form => {
-		form.addEventListener("submit", event => {
-			if (event.defaultPrevented) return;
-			event.preventDefault();
-			const method = (form.method || "get").toLowerCase();
-			if (method !== "get") return;
-			const action = form.action || baseUrl;
-			const params = new URLSearchParams(new FormData(form));
-			const target = params.toString() ? action + (action.includes("?") ? "&" : "?") + params : action;
-			navigate(target);
-		});
-	});
-}
-
-async function loadPage(url) {
-	showStatus("Loading...");
-	const response = await fetch(proxyUrl(url), { credentials: "include" });
-	if (!response.ok) throw new Error("HTTP " + response.status);
-	const html = await response.text();
-	await renderPage(html, url);
-	status.classList.remove("show");
-}
-
-async function navigate(value, addHistory = true) {
-	const target = normalizeUrl(value);
-	if (!target) return;
-	currentUrl = target;
-	address.value = target;
-	pageUrl.value = target;
-	home.style.display = "none";
-	browser.classList.add("visible");
-	document.querySelectorAll(".nav-button").forEach(button => button.classList.remove("active"));
-	if (addHistory) {
-		historyStack = historyStack.slice(0, historyIndex + 1);
-		historyStack.push(target);
-		historyIndex++;
-	}
-	const targetUrl = proxyUrl(target);
-	if (selectedBackend === "scramjet" || selectedBackend === "ultraviolet") {
-		window.location.href = targetUrl;
-		return;
-	}
-	if (openNewTab) {
-		window.open(targetUrl, "_blank");
-		return;
-	}
-	try {
-		await loadPage(target);
-	} catch (error) {
-		showStatus("Failed to load page");
-		page.innerHTML = "<div style=\"padding:24px;font:14px system-ui;color:#514638\">Unable to load this page.</div>";
-	}
-}
-
-function goHome() {
-	browser.classList.remove("visible");
-	home.style.display = "flex";
-	address.value = "";
-	homeInput.focus();
-	document.querySelectorAll(".nav-button").forEach(button => button.classList.remove("active"));
-	document.getElementById("home-nav").classList.add("active");
-}
-
-function goBack() {
-	if (historyIndex <= 0) return;
-	historyIndex--;
-	navigate(historyStack[historyIndex], false);
-}
-
-function goForward() {
-	if (historyIndex >= historyStack.length - 1) return;
-	historyIndex++;
-	navigate(historyStack[historyIndex], false);
-}
-
-function reload() {
-	if (!currentUrl) return;
-	loadPage(currentUrl).catch(() => showStatus("Failed to reload page"));
-}
-
-function submitHome() {
-	navigate(homeInput.value);
-	homeInput.value = "";
-}
-
-address.addEventListener("keydown", event => {
-	if (event.key === "Enter") navigate(address.value);
-});
-
-homeInput.addEventListener("keydown", event => {
-	if (event.key === "Enter") submitHome();
-});
-
-pageUrl.addEventListener("keydown", event => {
-	if (event.key === "Enter") navigate(pageUrl.value);
-});
-
-document.getElementById("go").addEventListener("click", submitHome);
-document.getElementById("home-nav").addEventListener("click", goHome);
-document.getElementById("new-tab").addEventListener("click", goHome);
-document.getElementById("back").addEventListener("click", goBack);
-document.getElementById("browser-back").addEventListener("click", goBack);
-document.getElementById("forward").addEventListener("click", goForward);
-document.getElementById("browser-forward").addEventListener("click", goForward);
-document.getElementById("reload").addEventListener("click", reload);
-document.getElementById("browser-reload").addEventListener("click", reload);
-
-document.getElementById("settings-button").addEventListener("click", event => {
-	event.stopPropagation();
-	settings.classList.toggle("visible");
-});
-
-document.addEventListener("click", event => {
-	if (!settings.contains(event.target) && event.target.id !== "settings-button") settings.classList.remove("visible");
-});
-
-document.getElementById("backend").addEventListener("change", event => {
-	selectedBackend = event.target.value;
-	localStorage.setItem("vanillia-backend", selectedBackend);
-	showStatus(BACKENDS[selectedBackend].name + " selected");
-	if (currentUrl && browser.classList.contains("visible")) {
-		showStatus("Switching backend...");
-		loadPage(currentUrl).catch(() => showStatus("Failed to switch backend"));
-	}
-});
-
-document.getElementById("https-toggle").addEventListener("click", event => {
-	useHttps = event.currentTarget.classList.toggle("on");
-});
-
-document.getElementById("tab-toggle").addEventListener("click", event => {
-	openNewTab = event.currentTarget.classList.toggle("on");
-});
-
-document.querySelectorAll(".quick-button").forEach(button => {
-	button.addEventListener("click", () => navigate(button.dataset.url));
-});
-
-window.addEventListener("keydown", event => {
-	if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "l") {
-		event.preventDefault();
-		address.focus();
-		address.select();
-	}
-	if ((event.altKey || event.metaKey) && event.key === "ArrowLeft") {
-		event.preventDefault();
-		goBack();
-	}
-	if ((event.altKey || event.metaKey) && event.key === "ArrowRight") {
-		event.preventDefault();
-		goForward();
-	}
-});
-</script>
-<script id="settings-upgrade-script">
-(() => {
-    const keys = { dark: "vanillia-dark-mode", animation: "vanillia-animated-bg", forceDark: "vanillia-force-dark", motion: "vanillia-reduced-motion", adblock: "vanillia-adblock", games: "vanillia-games", movies: "vanillia-movies", gibby: "vanillia-gibby" };
-    const defaults = { dark: false, animation: false, forceDark: false, motion: false, adblock: true, games: false, movies: false, gibby: false };
-    const read = key => localStorage.getItem(keys[key]) === null ? defaults[key] : localStorage.getItem(keys[key]) === "true";
-    const set = (key, value) => localStorage.setItem(keys[key], String(value));
-    const buttons = { dark: document.getElementById("dark-toggle"), animation: document.getElementById("animation-toggle"), forceDark: document.getElementById("force-dark-toggle"), motion: document.getElementById("motion-toggle"), adblock: document.getElementById("adblock-toggle"), games: document.getElementById("games-toggle"), movies: document.getElementById("movies-toggle"), gibby: document.getElementById("gibby-toggle") };
-    const applyPageDark = () => {
-        if (!page || !page.shadowRoot) return;
-        let style = page.shadowRoot.getElementById("vanillia-force-dark");
-        if (!read("forceDark")) { if (style) style.remove(); return; }
-        if (!style) { style = document.createElement("style"); style.id = "vanillia-force-dark"; page.shadowRoot.appendChild(style); }
-        style.textContent = 'html, body { background: #181715 !important; color: #eee8dc !important; } body, main, header, footer, section, article, nav, aside, div, p, li, td, th, pre, code, input, textarea, select, button { background-color: #24211d !important; color: #eee8dc !important; border-color: #4a4339 !important; } a { color: #d8cdbb !important; } img, video, canvas { filter: brightness(.86) !important; }';
-    };
-    const apply = () => {
-        document.body.classList.toggle("dark-mode", read("dark"));
-        document.body.classList.toggle("animated-bg", read("animation") && !read("motion"));
-        Object.entries(buttons).forEach(([key, button]) => button && button.classList.toggle("on", read(key)));
-        applyPageDark();
-    };
-    Object.entries(buttons).forEach(([key, button]) => {
-        if (!button) return;
-        button.addEventListener("click", () => { set(key, !read(key)); apply(); });
-    });
-    const observer = new MutationObserver(applyPageDark);
-    if (page) observer.observe(page, { childList: true, subtree: true });
-    apply();
-})();
-</script>
-</body>
-</html>
+</body></html>
