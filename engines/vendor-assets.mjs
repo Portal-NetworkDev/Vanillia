@@ -1,4 +1,4 @@
-import { cp, mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 import { scramjetPath } from "@mercuryworkshop/scramjet/path";
 import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
@@ -22,3 +22,16 @@ for (const [, destination] of paths) {
 for (const [source, destination] of paths) {
   await cp(source, destination, { recursive: true });
 }
+
+await writeFile(new URL("./uv/uv.config.js", root), `/*global Ultraviolet*/
+self.__uv$config = {
+    prefix: '/service/',
+    encodeUrl: Ultraviolet.codec.xor.encode,
+    decodeUrl: Ultraviolet.codec.xor.decode,
+    handler: '/uv/uv.handler.js',
+    client: '/uv/uv.client.js',
+    bundle: '/uv/uv.bundle.js',
+    config: '/uv/uv.config.js',
+    sw: '/uv/uv.sw.js',
+};
+`);
