@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vanillia Ultraviolet</title>
+<script src="/uv/uv.bundle.js"></script>
+<script src="/uv/uv.config.js"></script>
+<script src="/baremux/index.js"></script>
+</head>
+<body>
+<script>
+(async () => {
+    const target = "__VANILLIA_TARGET__";
+    if (!target) return;
+    await navigator.serviceWorker.register("/uv/sw.js");
+    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+    const wisp = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+    await connection.setTransport("/epoxy/index.mjs", [{ wisp }]);
+    location.href = __uv$config.prefix + __uv$config.encodeUrl(target);
+})();
+</script>
+</body>
+</html>
