@@ -1,6 +1,9 @@
 name: Fix proxy engine routes
 
 on:
+  push:
+    paths:
+      - .github/workflows/fix-engine-routes.yml
   workflow_dispatch:
 
 permissions:
@@ -68,7 +71,7 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add vercel.json api/scramjet.js api/ultraviolet.js
-          git commit -m "Fix Scramjet and Ultraviolet routes"
+          git diff --cached --quiet || git commit -m "Fix Scramjet and Ultraviolet routes"
           git push
       - name: Remove workflow
         run: |
