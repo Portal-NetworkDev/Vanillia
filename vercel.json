@@ -1,8 +1,28 @@
 {
   "rewrites": [
-    { "source": "/vanillia", "destination": "/api/vanillia" },
-    { "source": "/service-worker.js", "destination": "/api/vanillia" },
-    { "source": "/favicon", "destination": "/api/vanillia" },
-    { "source": "/api/icon", "destination": "/api/vanillia" }
+    {
+      "source": "/vanillia",
+      "destination": "/api/vanillia"
+    },
+    {
+      "source": "/service-worker.js",
+      "destination": "/api/vanillia"
+    },
+    {
+      "source": "/favicon",
+      "destination": "/api/vanillia"
+    },
+    {
+      "source": "/api/icon",
+      "destination": "/api/vanillia"
+    },
+    {
+      "source": "/education",
+      "destination": "/api/scramjet"
+    },
+    {
+      "source": "/classroom",
+      "destination": "/api/ultraviolet"
+    }
   ]
 }
