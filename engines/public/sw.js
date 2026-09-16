@@ -5,7 +5,12 @@ const scramjet = new ScramjetServiceWorker();
 
 self.addEventListener("fetch", event => {
     event.respondWith((async () => {
-        await scramjet.loadConfig();
+        try {
+            await scramjet.loadConfig();
+        } catch (error) {
+            console.error("scramjet config unavailable:", error);
+            return fetch(event.request);
+        }
         if (scramjet.route(event)) return scramjet.fetch(event);
         return fetch(event.request);
     })());
