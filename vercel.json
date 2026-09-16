@@ -12,6 +12,10 @@
   ],
   "rewrites": [
     {
+      "source": "/baremux/index.js",
+      "destination": "/engines/baremux-scramjet-wrapper.js"
+    },
+    {
       "source": "/baremux/:path*",
       "destination": "/engines/public/baremux/:path*"
     },
