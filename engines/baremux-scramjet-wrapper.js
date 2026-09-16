@@ -9,7 +9,7 @@ const init=async()=>{
 if(window.__vanilliaScramjetController)return window.__vanilliaScramjetController;
 await loadScript('/scram/scramjet.all.js');
 const {ScramjetController}=$scramjetLoadController();
-const controller=new ScramjetController({files:{wasm:'/scram/scramjet.wasm.wasm',all:'/scram/scramjet.all.js',sync:'/scram/scramjet.sync.js'}});
+const controller=new ScramjetController({prefix:'/scram/service/',files:{wasm:'/scram/scramjet.wasm.wasm',all:'/scram/scramjet.all.js',sync:'/scram/scramjet.sync.js'}});
 controller.init();
 window.__vanilliaScramjetController=controller;
 return controller;
