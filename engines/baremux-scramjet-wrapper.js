@@ -1,4 +1,9 @@
 (()=>{
+const xhr=new XMLHttpRequest();
+xhr.open('GET','/engines/public/baremux/index.js',false);
+xhr.send();
+if(xhr.status<200||xhr.status>=300)throw new Error('Failed to load BareMux');
+eval(xhr.responseText);
 const loadScript=src=>new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=()=>reject(new Error(`Failed to load ${src}`));document.head.appendChild(script)});
 const init=async()=>{
 if(window.__vanilliaScramjetController)return window.__vanilliaScramjetController;
@@ -15,9 +20,4 @@ const path=new URL(scriptURL,location.href).pathname;
 if(path==='/sw.js')await init();
 return register(scriptURL,options);
 };
-const script=document.createElement('script');
-script.src='/engines/public/baremux/index.js';
-script.onload=()=>{};
-script.onerror=()=>{throw new Error('Failed to load BareMux')};
-document.head.appendChild(script);
 })();
